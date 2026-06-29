@@ -10,8 +10,6 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
-final now = DateTime.now().toUtc();
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -36,9 +34,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String _output = 'Now:${now.toIso8601String()}\n';
+  String _output = '';
 
-  Future<List<TestTableData>> _addRow() async {
+  Future<List<TestTableData>> _addRow(DateTime now) async {
     final uuid = Uuid().v4();
 
     await appDb
@@ -57,9 +55,15 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _add() async {
-    final rows = await _addRow();
+    final now = DateTime.now().toUtc();
+    final rows = await _addRow(now);
 
-    if (rows.isNotEmpty) _output += 'Rows[0].dt:${rows[0].dt.toIso8601String()}\n';
+    _output = 'Now:${now.toIso8601String()}\n';
+
+    if (rows.isNotEmpty) {
+      _output += 'ISO Rows[0].dt:${rows[0].dt.toIso8601String()}\n';
+      _output += 'Rows[0].dt:${rows[0].dt}\n';
+    }
 
     setState(() {
       _output += rows.toList().toString();
